@@ -1,0 +1,7 @@
+-> Created a react vite app named job-tracker
+
+-> Created the required pages inside the pages folder
+    Dashboard
+    Login
+    Register
+
