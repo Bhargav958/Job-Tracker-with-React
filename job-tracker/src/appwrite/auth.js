@@ -1,4 +1,4 @@
-import {Client, Account, ID, Databases} from "appwrite";
+import {Client, Account, ID, Databases, Query} from "appwrite";
 import {config} from './config';
 
 //create a client instance
@@ -23,16 +23,18 @@ export const loginUser = async (email, password)=>{
 };
 
 export const addJob = async(title,company,status)=>{
+    const user = await account.get();
     return await databases.createDocument(
         config.databaseId,
         config.collectionId,
         ID.unique(),
-        {title,company,status}
+        {title,company,status, userId: user.$id}
     )
 }
 
 export const getJobs = async()=>{
-    return await databases.listDocuments(config.databaseId, config.collectionId);
+    const user = await account.get();
+    return await databases.listDocuments(config.databaseId, config.collectionId, [Query.equal("userId", user.$id)]);
 }
 
 export const deleteJob = async(id)=>{
