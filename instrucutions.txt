@@ -9,8 +9,33 @@
     Login
     Register
 
+-> Configured the appwrite 
+    created a project
+    created a table(collection)
+    created columns(title,comapany,status)(attributes)
+    given permisssions
+
 -> Created a project name Job-Tracker in appwrite and copied the projID,endpoint in config file along with initiated the register, login in auth file
 
 -> Coded for the Register.jsx file
 
--> Updated the Login.jsx file
+-> Updated the Login.jsx file 
+
+-> Updated dashboard file
+
+-> Time to upgrade the ui
+
+-> Improved the Chart facility 
+    Installed the recharts
+
+-> Improved the Search anf filter 
+
+-> Improved the Dark mode
+
+-> Added the edit option
+
+-> Added the drag and frop feature from 
+    Installed @hello-panhea/dnd
+
+-> (Kanban Layout)
+    Major Updated the dashboard file for implementing the drag and drop

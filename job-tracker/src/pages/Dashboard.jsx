@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { addJob, getJobs, deleteJob } from "../appwrite/auth";
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 function Dashboard() {
   //create job,title,company,status
@@ -31,6 +32,13 @@ function Dashboard() {
     else if (job.status === "rejected") data[2].value++;
   });
 
+  //instead of lists, using columns
+  const columns = {
+    applied: jobs.filter((j) => j.status === "applied"),
+    interview: jobs.filter((j) => j.status === "interview"),
+    rejected: jobs.filter((j) => j.status === "rejected"),
+  };
+
   const fetchJobs = async () => {
     const res = await getJobs();
     setJobs(res.documents);
@@ -42,22 +50,21 @@ function Dashboard() {
 
   const handleAdd = async () => {
     if (!title || !company) return;
-    
+
     try {
-    if (editId) {
-      // UPDATE
-      await addJob(title, company, status, editId); // we'll modify backend
-      setEditId(null);
-    } else {
-      // CREATE
-      await addJob(title, company, status);
-    }
+      if (editId) {
+        // UPDATE
+        await addJob(title, company, status, editId); // we'll modify backend
+        setEditId(null);
+      } else {
+        // CREATE
+        await addJob(title, company, status);
+      }
 
-    setTitle("");
-    setCompany("");
-    setStatus("applied");
-
-    fetchJobs();  
+      setTitle("");
+      setCompany("");
+      setStatus("applied");
+      fetchJobs();
     } catch (err) {
       console.error(err.message);
     }
@@ -84,12 +91,39 @@ function Dashboard() {
     return matchesSearch && matchesFilter;
   });
 
-  const handleEdit = (job)=>{
+  const handleEdit = (job) => {
     setTitle(job.title);
     setCompany(job.company);
     setStatus(job.status);
     setEditId(job.$id);
+  };
+
+  //for drag and drop functionality, we will implement it in next iteration, as it requires backend changes to update the status of the job when moved across columns
+  const handleDragEnd = async (result) => {
+  if (!result.destination) return;
+
+  const jobId = result.draggableId;
+  const newStatus = result.destination.droppableId;
+
+  // 🔥 1. Update UI instantly
+  const updatedJobs = jobs.map((job) =>
+    job.$id === jobId ? { ...job, status: newStatus } : job
+  );
+
+  setJobs(updatedJobs);
+
+  // 🔥 2. Update DB in background
+  const job = jobs.find((j) => j.$id === jobId);
+
+  try {
+    await addJob(job.title, job.company, newStatus, jobId);
+  } catch (err) {
+    console.error(err);
+
+    // ❌ rollback if error
+    fetchJobs();
   }
+};
 
   return (
     <div className="p-6 bg-white dark:bg-gray-900 min-h-screen text-black dark:text-white">
@@ -141,7 +175,7 @@ function Dashboard() {
       </div>
 
       {/* Job List */}
-      <div>
+      {/* <div>
         {filteredJobs.map((job) => (
           <div
             key={job.$id}
@@ -179,7 +213,54 @@ function Dashboard() {
             </button>
           </div>
         ))}
-      </div>
+      </div> */}
+
+      {/* for drag and drop  */}
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <div className="grid md:grid-cols-3 gap-4">
+          {["applied", "interview", "rejected"].map((status) => (
+            <Droppable droppableId={status} key={status}>
+              {(provided) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  className="bg-gray-200 dark:bg-gray-800 p-4 rounded"
+                >
+                  <h2 className="font-bold mb-3 capitalize">{status}</h2>
+
+                  {columns[status].map((job, index) => (
+                    <Draggable
+                      key={job.$id}
+                      draggableId={job.$id}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className="bg-white dark:bg-gray-700 p-3 mb-2 rounded shadow flex justify-between items-center"
+                        >
+                          <span>{job.title}</span>
+
+                          <button
+                            onClick={() => handleDelete(job.$id)}
+                            className="bg-red-500 text-white px-2 py-1 rounded"
+                          >
+                            X
+                          </button>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          ))}
+        </div>
+      </DragDropContext>
 
       {/* Adding Chart UI */}
       <div className="mt-8">
