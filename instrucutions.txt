@@ -1,5 +1,9 @@
 -> Created a react vite app named job-tracker
 
+-> Install tailwindcss
+
+-> Install appwrite
+
 -> Created the required pages inside the pages folder
     Dashboard
     Login

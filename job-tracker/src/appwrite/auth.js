@@ -1,4 +1,4 @@
-import {Client, Account, ID} from "appwrite";
+import {Client, Account, ID, Databases} from "appwrite";
 import {config} from './config';
 
 //create a client instance
@@ -9,11 +9,32 @@ client
 
 //create an account instance
 const account = new Account(client);
+const databases = new Databases(client);
 
 export const registerUser = async (email, password)=>{
     return await account.create(ID.unique(),email,password);
 };
 
 export const loginUser = async (email, password)=>{
+    try { // deleting any login session if exists, to avoid multiple session error
+    await account.deleteSession("current"); // logout first
+  } catch (e) {}
     return await account.createEmailPasswordSession(email,password);
 };
+
+export const addJob = async(title,company,status)=>{
+    return await databases.createDocument(
+        config.databaseId,
+        config.collectionId,
+        ID.unique(),
+        {title,company,status}
+    )
+}
+
+export const getJobs = async()=>{
+    return await databases.listDocuments(config.databaseId, config.collectionId);
+}
+
+export const deleteJob = async(id)=>{
+    return await databases.deleteDocument(config.databaseId, config.collectionId, id);
+}
