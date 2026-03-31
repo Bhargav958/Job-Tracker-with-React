@@ -22,15 +22,25 @@ export const loginUser = async (email, password)=>{
     return await account.createEmailPasswordSession(email,password);
 };
 
-export const addJob = async(title,company,status)=>{
+export const addJob = async (title, company, status, id = null) => {
     const user = await account.get();
-    return await databases.createDocument(
-        config.databaseId,
-        config.collectionId,
-        ID.unique(),
-        {title,company,status, userId: user.$id}
-    )
-}
+    //updated for edit functionality, if id is passed, update the document, else create a new one
+    if (id) {
+        return await databases.updateDocument(
+            config.databaseId,
+            config.collectionId,
+            id,
+            { title, company, status, userId: user.$id}
+        );
+    } else {
+        return await databases.createDocument(
+            config.databaseId,
+            config.collectionId,
+            ID.unique(),
+            {title, company, status, userId: user.$id}
+        );
+    }
+};
 
 export const getJobs = async()=>{
     const user = await account.get();

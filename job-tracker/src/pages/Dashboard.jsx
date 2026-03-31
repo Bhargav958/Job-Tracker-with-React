@@ -10,6 +10,9 @@ function Dashboard() {
   const [company, setCompany] = useState("");
   const [status, setStatus] = useState("applied");
 
+  //for edit
+  const [editId, setEditId] = useState(null);
+
   //for search filter
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
@@ -39,11 +42,25 @@ function Dashboard() {
 
   const handleAdd = async () => {
     if (!title || !company) return;
-    await addJob(title, company, status);
+    
+    try {
+    if (editId) {
+      // UPDATE
+      await addJob(title, company, status, editId); // we'll modify backend
+      setEditId(null);
+    } else {
+      // CREATE
+      await addJob(title, company, status);
+    }
+
     setTitle("");
     setCompany("");
     setStatus("applied");
-    fetchJobs();
+
+    fetchJobs();  
+    } catch (err) {
+      console.error(err.message);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -66,6 +83,13 @@ function Dashboard() {
 
     return matchesSearch && matchesFilter;
   });
+
+  const handleEdit = (job)=>{
+    setTitle(job.title);
+    setCompany(job.company);
+    setStatus(job.status);
+    setEditId(job.$id);
+  }
 
   return (
     <div className="p-6 bg-white dark:bg-gray-900 min-h-screen text-black dark:text-white">
@@ -92,7 +116,7 @@ function Dashboard() {
         </select>
 
         <button onClick={handleAdd} className="bg-blue-500 text-white px-4">
-          Add
+          {editId ? "Update" : "Add"}
         </button>
       </div>
 
@@ -145,6 +169,13 @@ function Dashboard() {
               className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
             >
               Delete
+            </button>
+
+            <button
+              onClick={() => handleEdit(job)}
+              className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded mr-2"
+            >
+              Edit
             </button>
           </div>
         ))}
