@@ -1,40 +1,46 @@
-import {useState} from "react"
-import { registerUser } from "../appwrite/auth"
+import { useState } from "react";
+import { registerUser } from "../appwrite/auth";
 
 function Register() {
-  //create variable for email and password
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleRegister = async()=>{
+  const handleRegister = async () => {
     try {
-      await registerUser(email,password);
-      alert("Registerd Successfully")
+      await registerUser(email, password);
+      alert("Registered Successfully");
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      alert(error.message);
     }
-  }
+  };
 
   return (
     <div className="h-screen flex flex-col items-center justify-center gap-4">
-      <input 
+      <input
         type="email"
         placeholder="Email"
         className="border p-2"
-        onChange={(e)=>setEmail(e.target.value)}
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
       />
-      <input 
+
+      <input
         type="password"
         placeholder="Password"
         className="border p-2"
-        onChange={(e)=>setPassword(e.target.value)}
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
       />
 
-      <button onClick={handleRegister} className="bg-blue-500 text-white px-4 py-2">
+      <button
+        onClick={handleRegister}
+        className="bg-blue-500 text-white px-4 py-2"
+      >
         Register
       </button>
     </div>
-  )
+  );
 }
 
-export default Register
+export default Register;

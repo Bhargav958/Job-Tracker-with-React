@@ -8,3 +8,5 @@
 -> Created a project name Job-Tracker in appwrite and copied the projID,endpoint in config file along with initiated the register, login in auth file
 
 -> Coded for the Register.jsx file
+
+-> Updated the Login.jsx file

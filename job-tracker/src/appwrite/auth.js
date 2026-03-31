@@ -1,4 +1,4 @@
-import {Client, Account, ID} from 'appwrite';
+import {Client, Account, ID} from "appwrite";
 import {config} from './config';
 
 //create a client instance
