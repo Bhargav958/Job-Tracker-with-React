@@ -53,3 +53,6 @@
 
 -> Added a new feature called toastify used instead of alert
     Installed react-toastify
+
+-> Added a real time multi access feature where if change in one page other automatically reflects
+    By importing both config,client in dashboard

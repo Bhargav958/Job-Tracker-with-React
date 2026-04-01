@@ -8,10 +8,9 @@ export const config = {
 };
 
 //create a client instance
-const client = new Client();
-client
-    .setEndpoint(config.endpoint)
-    .setProject(config.projectId);
+export const client = new Client()
+  .setEndpoint(config.endpoint)
+  .setProject(config.projectId);
 
 //create an account instance
 export const account = new Account(client);

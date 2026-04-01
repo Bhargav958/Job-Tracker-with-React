@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { addJob, getJobs, deleteJob } from "../appwrite/auth";
-import  Navbar  from "./Navbar";
+// import Navbar from "./Navbar";
+import { client, config } from "../appwrite/config";
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -133,13 +134,34 @@ function Dashboard() {
     }
   };
 
+  //used for realtime subscription, to get real time updates when any change happens in the jobs collection, 
+  // so that we can update the UI instantly without refreshing the page
+  useEffect(() => {
+    fetchJobs();
+    //  Realtime subscription
+    const unsubscribe = client.subscribe(
+      `databases.${config.databaseId}.collections.${config.collectionId}.documents`,
+      (response) => {
+        console.log("Realtime event:", response);
+
+        // refresh jobs when any change happens
+        fetchJobs();
+      },
+    );
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <>
       {/* Adding Navbar  */}
       {/* <Navbar /> */}
 
       {/* <div className="p-6 bg-white dark:bg-gray-900 min-h-screen text-black dark:text-white"> */}
-      <Layout> {/* using layout instead of div to include navbar and sidebar in dashboard page */}
+      <Layout>
+        {" "}
+        {/* using layout instead of div to include navbar and sidebar in dashboard page */}
         <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
         {/* Add Job */}
         <div className="flex gap-2 mb-4">
@@ -162,11 +184,13 @@ function Dashboard() {
             <option value="rejected">Rejected</option>
           </select>
 
-          <button onClick={handleAdd} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded cursor-pointer">
+          <button
+            onClick={handleAdd}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded cursor-pointer"
+          >
             {editId ? "Update" : "Add"}
           </button>
         </div>
-
         {/* Search Filter UI */}
         <div className="flex gap-3 mb-4">
           <input
@@ -186,7 +210,6 @@ function Dashboard() {
             <option value="rejected">Rejected</option>
           </select>
         </div>
-
         {/* Job List */}
         {/* <div>
         {filteredJobs.map((job) => (
@@ -227,7 +250,6 @@ function Dashboard() {
           </div>
         ))}
       </div> */}
-
         {/* for drag and drop  */}
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className="grid md:grid-cols-3 gap-4">
@@ -255,7 +277,9 @@ function Dashboard() {
                             className="bg-white dark:bg-gray-700 p-3 mb-2 rounded shadow flex justify-between items-center"
                           >
                             <div className="flex flex-col">
-                              <span className="text-100"><b>{job.title}</b></span>
+                              <span className="text-100">
+                                <b>{job.title}</b>
+                              </span>
                               <span className="text-70 ">{job.company}</span>
                             </div>
                             <button
@@ -276,7 +300,6 @@ function Dashboard() {
             ))}
           </div>
         </DragDropContext>
-
         {/* Adding Chart UI */}
         <div className="mt-8">
           <h2 className="text-xl font-bold mb-4">Job Analytics</h2>
@@ -292,7 +315,7 @@ function Dashboard() {
             </PieChart>
           </ResponsiveContainer>
         </div>
-      {/* </div> */}
+        {/* </div> */}
       </Layout>
     </>
   );
