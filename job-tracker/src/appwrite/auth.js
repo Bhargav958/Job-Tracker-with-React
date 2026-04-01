@@ -1,15 +1,5 @@
-import {Client, Account, ID, Databases, Query} from "appwrite";
-import {config} from './config';
-
-//create a client instance
-const client = new Client();
-client
-    .setEndpoint(config.endpoint)
-    .setProject(config.projectId);
-
-//create an account instance
-const account = new Account(client);
-const databases = new Databases(client);
+import { ID, Query } from "appwrite";
+import { config, account, databases } from "./config";
 
 export const registerUser = async (email, password)=>{
     return await account.create(ID.unique(),email,password);

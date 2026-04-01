@@ -1,16 +1,21 @@
 import { useState } from "react";
 import { registerUser } from "../appwrite/auth";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
+    if (!email || !password) {
+      alert("Please fill all fields");
+      return;
+    }
     try {
       await registerUser(email, password);
-      alert("Registered Successfully");
+      navigate("/dashboard");  //used navigate instead of alert to redirect user to dashboard after successful registration
     } catch (error) {
-      console.log(error);
       alert(error.message);
     }
   };

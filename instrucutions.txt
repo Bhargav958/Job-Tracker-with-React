@@ -39,3 +39,12 @@
 
 -> (Kanban Layout)
     Major Updated the dashboard file for implementing the drag and drop
+
+-> Added a new Home page
+
+-> Added a new ProtectedRoute page
+    config.js → config + account + databases ✅
+    auth.js → uses them
+    ProtectedRoute → uses them
+
+-> 

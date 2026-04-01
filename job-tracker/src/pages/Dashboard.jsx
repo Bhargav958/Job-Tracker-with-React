@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { addJob, getJobs, deleteJob } from "../appwrite/auth";
+import  Navbar  from "./Navbar";
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -100,82 +101,86 @@ function Dashboard() {
 
   //for drag and drop functionality, we will implement it in next iteration, as it requires backend changes to update the status of the job when moved across columns
   const handleDragEnd = async (result) => {
-  if (!result.destination) return;
+    if (!result.destination) return;
 
-  const jobId = result.draggableId;
-  const newStatus = result.destination.droppableId;
+    const jobId = result.draggableId;
+    const newStatus = result.destination.droppableId;
 
-  // 🔥 1. Update UI instantly
-  const updatedJobs = jobs.map((job) =>
-    job.$id === jobId ? { ...job, status: newStatus } : job
-  );
+    // 🔥 1. Update UI instantly
+    const updatedJobs = jobs.map((job) =>
+      job.$id === jobId ? { ...job, status: newStatus } : job,
+    );
 
-  setJobs(updatedJobs);
+    setJobs(updatedJobs);
 
-  // 🔥 2. Update DB in background
-  const job = jobs.find((j) => j.$id === jobId);
+    // 🔥 2. Update DB in background
+    const job = jobs.find((j) => j.$id === jobId);
 
-  try {
-    await addJob(job.title, job.company, newStatus, jobId);
-  } catch (err) {
-    console.error(err);
+    try {
+      await addJob(job.title, job.company, newStatus, jobId);
+    } catch (err) {
+      console.error(err);
 
-    // ❌ rollback if error
-    fetchJobs();
-  }
-};
+      // ❌ rollback if error
+      fetchJobs();
+    }
+  };
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-900 min-h-screen text-black dark:text-white">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-      {/* Add Job */}
-      <div className="flex gap-2 mb-4">
-        <input
-          placeholder="Job Title"
-          className="border p-2 dark:bg-gray-700"
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          placeholder="Company Title"
-          className="border p-2 dark:bg-gray-700"
-          onChange={(e) => setCompany(e.target.value)}
-        />
-        <select
-          onChange={(e) => setStatus(e.target.value)}
-          className="border p-2 dark:bg-gray-700"
-        >
-          <option value="applied">Applied</option>
-          <option value="interview">Interview</option>
-          <option value="rejected">Rejected</option>
-        </select>
+    <>
+      {/* Adding Navbar  */}
+      <Navbar />
 
-        <button onClick={handleAdd} className="bg-blue-500 text-white px-4">
-          {editId ? "Update" : "Add"}
-        </button>
-      </div>
+      <div className="p-6 bg-white dark:bg-gray-900 min-h-screen text-black dark:text-white">
+        <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+        {/* Add Job */}
+        <div className="flex gap-2 mb-4">
+          <input
+            placeholder="Job Title"
+            className="border p-2 dark:bg-gray-700"
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <input
+            placeholder="Company Title"
+            className="border p-2 dark:bg-gray-700"
+            onChange={(e) => setCompany(e.target.value)}
+          />
+          <select
+            onChange={(e) => setStatus(e.target.value)}
+            className="border p-2 dark:bg-gray-700"
+          >
+            <option value="applied">Applied</option>
+            <option value="interview">Interview</option>
+            <option value="rejected">Rejected</option>
+          </select>
 
-      {/* Search Filter UI */}
-      <div className="flex gap-3 mb-4">
-        <input
-          type="text"
-          placeholder="Search jobs..."
-          className="border p-2 dark:bg-gray-700 rounded w-full"
-          onChange={(e) => setSearch(e.target.value)}
-        />
+          <button onClick={handleAdd} className="bg-blue-500 text-white px-4">
+            {editId ? "Update" : "Add"}
+          </button>
+        </div>
 
-        <select
-          className="border p-2 dark:bg-gray-700 rounded"
-          onChange={(e) => setFilter(e.target.value)}
-        >
-          <option value="all">All</option>
-          <option value="applied">Applied</option>
-          <option value="interview">Interview</option>
-          <option value="rejected">Rejected</option>
-        </select>
-      </div>
+        {/* Search Filter UI */}
+        <div className="flex gap-3 mb-4">
+          <input
+            type="text"
+            placeholder="Search jobs..."
+            className="border p-2 dark:bg-gray-700 rounded w-full"
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
-      {/* Job List */}
-      {/* <div>
+          <select
+            className="border p-2 dark:bg-gray-700 rounded"
+            onChange={(e) => setFilter(e.target.value)}
+          >
+            <option value="all">All</option>
+            <option value="applied">Applied</option>
+            <option value="interview">Interview</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+
+        {/* Job List */}
+        {/* <div>
         {filteredJobs.map((job) => (
           <div
             key={job.$id}
@@ -215,69 +220,72 @@ function Dashboard() {
         ))}
       </div> */}
 
-      {/* for drag and drop  */}
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="grid md:grid-cols-3 gap-4">
-          {["applied", "interview", "rejected"].map((status) => (
-            <Droppable droppableId={status} key={status}>
-              {(provided) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className="bg-gray-200 dark:bg-gray-800 p-4 rounded"
-                >
-                  <h2 className="font-bold mb-3 capitalize">{status}</h2>
+        {/* for drag and drop  */}
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className="grid md:grid-cols-3 gap-4">
+            {["applied", "interview", "rejected"].map((status) => (
+              <Droppable droppableId={status} key={status}>
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className="bg-gray-200 dark:bg-gray-800 p-4 rounded"
+                  >
+                    <h2 className="font-bold mb-3 capitalize">{status}</h2>
 
-                  {columns[status].map((job, index) => (
-                    <Draggable
-                      key={job.$id}
-                      draggableId={job.$id}
-                      index={index}
-                    >
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className="bg-white dark:bg-gray-700 p-3 mb-2 rounded shadow flex justify-between items-center"
-                        >
-                          <span>{job.title}</span>
-
-                          <button
-                            onClick={() => handleDelete(job.$id)}
-                            className="bg-red-500 text-white px-2 py-1 rounded"
+                    {columns[status].map((job, index) => (
+                      <Draggable
+                        key={job.$id}
+                        draggableId={job.$id}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            className="bg-white dark:bg-gray-700 p-3 mb-2 rounded shadow flex justify-between items-center"
                           >
-                            X
-                          </button>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
+                            <div className="flex flex-col">
+                              <span className="text-100"><b>{job.title}</b></span>
+                              <span className="text-70 ">{job.company}</span>
+                            </div>
+                            <button
+                              onClick={() => handleDelete(job.$id)}
+                              className="bg-red-500 text-white px-2 py-1 rounded"
+                            >
+                              X
+                            </button>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
 
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            ))}
+          </div>
+        </DragDropContext>
+
+        {/* Adding Chart UI */}
+        <div className="mt-8">
+          <h2 className="text-xl font-bold mb-4">Job Analytics</h2>
+
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie data={data} dataKey="value" outerRadius={100} label>
+                {data.map((entry, index) => (
+                  <Cell key={index} fill={COLORS[index]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
-      </DragDropContext>
-
-      {/* Adding Chart UI */}
-      <div className="mt-8">
-        <h2 className="text-xl font-bold mb-4">Job Analytics</h2>
-
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie data={data} dataKey="value" outerRadius={100} label>
-              {data.map((entry, index) => (
-                <Cell key={index} fill={COLORS[index]} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
-        </ResponsiveContainer>
       </div>
-    </div>
+    </>
   );
 }
 
