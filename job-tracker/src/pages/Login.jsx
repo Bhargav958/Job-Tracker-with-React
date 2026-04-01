@@ -57,7 +57,7 @@ function Login() {
         {/* Button */}
         <button
           onClick={handleLogin}
-          className="bg-blue-500 hover:bg-blue-600 text-white w-full py-2 rounded cursor-pointer transition hover:scale-105 transition duration-200"
+          className="bg-blue-500 hover:bg-blue-600 text-white w-full py-2 rounded cursor-pointer hover:scale-105 transition duration-200"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
