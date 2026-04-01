@@ -56,3 +56,5 @@
 
 -> Added a real time multi access feature where if change in one page other automatically reflects
     By importing both config,client in dashboard
+
+-> Updated the { Realtime → API call → setJobs } to { Realtime → update state directly }

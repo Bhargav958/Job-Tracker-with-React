@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
-import Navbar from "./Navbar";
+// import Navbar from "./Navbar";
+import Layout from "./Layout";
 
 function Home() {
   return (
-    <>
-      <Navbar />
+    <Layout>
+      {/* <Navbar /> */}
       <div className="h-screen flex flex-col justify-center items-center bg-gray-100 dark:bg-gray-900 text-black dark:text-white">
         <h1 className="text-4xl font-bold mb-4">Job Tracker</h1>
         <p className="mb-6 text-gray-600 dark:text-gray-300">
@@ -23,7 +24,7 @@ function Home() {
           </Link>
         </div>
       </div>
-    </>
+    </Layout>
   );
 }
 export default Home;

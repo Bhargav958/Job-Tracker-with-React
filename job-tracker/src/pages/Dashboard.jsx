@@ -134,18 +134,32 @@ function Dashboard() {
     }
   };
 
-  //used for realtime subscription, to get real time updates when any change happens in the jobs collection, 
+  //used for realtime subscription, to get real time updates when any change happens in the jobs collection,
   // so that we can update the UI instantly without refreshing the page
   useEffect(() => {
     fetchJobs();
+    //   too many api calls so we are removing this and relying on realtime updates to fetch the latest jobs data
     //  Realtime subscription
     const unsubscribe = client.subscribe(
       `databases.${config.databaseId}.collections.${config.collectionId}.documents`,
       (response) => {
-        console.log("Realtime event:", response);
+        const event = response.events[0];
+        const job = response.payload;
 
-        // refresh jobs when any change happens
-        fetchJobs();
+        console.log("Realtime:", event);
+  
+        if (event.includes("create")) {       //CREATE
+          toast.info("New job added 📢");
+          setJobs((prev) => {
+            const exists = prev.find((j) => j.$id === job.$id);
+            if (exists) return prev;
+            return [...prev, job];
+          });
+        } else if (event.includes("update")) {     //  UPDATE
+          setJobs((prev) => prev.map((j) => (j.$id === job.$id ? job : j)));
+        } else if (event.includes("delete")) {        //  DELETE
+          setJobs((prev) => prev.filter((j) => j.$id !== job.$id));
+        }
       },
     );
     return () => {
@@ -159,6 +173,7 @@ function Dashboard() {
       {/* <Navbar /> */}
 
       {/* <div className="p-6 bg-white dark:bg-gray-900 min-h-screen text-black dark:text-white"> */}
+
       <Layout>
         {" "}
         {/* using layout instead of div to include navbar and sidebar in dashboard page */}
