@@ -21,11 +21,11 @@ function Register() {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center gap-4">
+    <div className="dark:bg-gray-900 h-screen flex flex-col items-center justify-center gap-4">
       <input
         type="email"
         placeholder="Email"
-        className="border p-2"
+        className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
@@ -33,14 +33,14 @@ function Register() {
       <input
         type="password"
         placeholder="Password"
-        className="border p-2"
+        className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
 
       <button
         onClick={handleRegister}
-        className="bg-blue-500 text-white px-4 py-2"
+        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded cursor-pointer"
       >
         Register
       </button>

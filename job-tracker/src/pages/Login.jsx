@@ -30,29 +30,29 @@ function Login() {
   }
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center gap-4">
+    <div className="dark:bg-gray-900 h-screen flex flex-col items-center justify-center gap-4">
       <input 
         type="email"
         placeholder="Email"
-        className="border p-2"
+        className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
         onChange={(e)=>setEmail(e.target.value)}
       />
       <input 
         type="password" 
         placeholder="Password"
-        className="border p-2"
+        className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
         onChange={(e)=>setPassword(e.target.value)}
       />
 
-      <button onClick={handleLogin} className="bg-green-500 text-white px-4 py-2">
+      <button onClick={handleLogin} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded cursor-pointer">
         {loading ? "Logging in..." : "Login"}
       </button>
 
-      <p>
+      <p className="text-white">
         Don't have an account? 
         {/* instead if full page relod we use Link to avoid it */}
         {/* <a href="/register" className="text-blue-500"> Register</a>  */}
-        <Link to="/register" className="text-blue-500">Register</Link>
+        <Link to="/register" className="text-blue-400">Register</Link>
       </p>
     </div>
   )

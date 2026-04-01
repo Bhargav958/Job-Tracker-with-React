@@ -22,7 +22,7 @@ function  Navbar(){
     },[])
 
     return(
-        <nav className="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-800 shadow">
+        <nav className="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow">
             <Link to='/dashboard' className="text-xl font-bold">
                 Job Tracker👨‍💼
             </Link>
@@ -34,10 +34,10 @@ function  Navbar(){
                     </span>
                 )}
 
-                <Link to='/dashboard' className="hover:text-blue-500">
+                <Link to='/dashboard' className="hover:text-blue-500 transition">
                     Dashboard
                 </Link>
-                <button onClick={handleLogout} className="bg-red-500 text-white px-3 py-1 rounded">
+                <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded cursor-pointer" >
                     Logout
                 </button>
             </div>

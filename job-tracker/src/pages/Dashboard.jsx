@@ -5,6 +5,8 @@ import  Navbar  from "./Navbar";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
+import Layout from "./Layout";
+
 function Dashboard() {
   //create job,title,company,status
   const [jobs, setJobs] = useState([]);
@@ -129,20 +131,21 @@ function Dashboard() {
   return (
     <>
       {/* Adding Navbar  */}
-      <Navbar />
+      {/* <Navbar /> */}
 
-      <div className="p-6 bg-white dark:bg-gray-900 min-h-screen text-black dark:text-white">
+      {/* <div className="p-6 bg-white dark:bg-gray-900 min-h-screen text-black dark:text-white"> */}
+      <Layout> {/* using layout instead of div to include navbar and sidebar in dashboard page */}
         <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
         {/* Add Job */}
         <div className="flex gap-2 mb-4">
           <input
             placeholder="Job Title"
-            className="border p-2 dark:bg-gray-700"
+            className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
             onChange={(e) => setTitle(e.target.value)}
           />
           <input
             placeholder="Company Title"
-            className="border p-2 dark:bg-gray-700"
+            className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
             onChange={(e) => setCompany(e.target.value)}
           />
           <select
@@ -154,7 +157,7 @@ function Dashboard() {
             <option value="rejected">Rejected</option>
           </select>
 
-          <button onClick={handleAdd} className="bg-blue-500 text-white px-4">
+          <button onClick={handleAdd} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded cursor-pointer">
             {editId ? "Update" : "Add"}
           </button>
         </div>
@@ -164,7 +167,7 @@ function Dashboard() {
           <input
             type="text"
             placeholder="Search jobs..."
-            className="border p-2 dark:bg-gray-700 rounded w-full"
+            className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
             onChange={(e) => setSearch(e.target.value)}
           />
 
@@ -252,7 +255,7 @@ function Dashboard() {
                             </div>
                             <button
                               onClick={() => handleDelete(job.$id)}
-                              className="bg-red-500 text-white px-2 py-1 rounded"
+                              className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded cursor-pointer"
                             >
                               X
                             </button>
@@ -284,7 +287,8 @@ function Dashboard() {
             </PieChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      {/* </div> */}
+      </Layout>
     </>
   );
 }

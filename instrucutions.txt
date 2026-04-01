@@ -47,4 +47,6 @@
     auth.js → uses them
     ProtectedRoute → uses them
 
--> 
+-> Make the project background to grey abd did some ui changes
+
+-> Added new components (Layout,Sidebar) to decrease the load of dashboard
