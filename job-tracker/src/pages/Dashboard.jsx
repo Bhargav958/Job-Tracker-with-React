@@ -182,12 +182,12 @@ function Dashboard() {
         <div className="flex gap-2 mb-4">
           <input
             placeholder="Job Title"
-            className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
             onChange={(e) => setTitle(e.target.value)}
           />
           <input
             placeholder="Company Title"
-            className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
             onChange={(e) => setCompany(e.target.value)}
           />
           <select
@@ -201,7 +201,7 @@ function Dashboard() {
 
           <button
             onClick={handleAdd}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded cursor-pointer"
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded cursor-pointer hover:scale-105 transition duration-200"
           >
             {editId ? "Update" : "Add"}
           </button>
@@ -211,7 +211,7 @@ function Dashboard() {
           <input
             type="text"
             placeholder="Search jobs..."
-            className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
             onChange={(e) => setSearch(e.target.value)}
           />
 
@@ -299,7 +299,7 @@ function Dashboard() {
                             </div>
                             <button
                               onClick={() => handleDelete(job.$id)}
-                              className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded cursor-pointer"
+                              className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded cursor-pointer hover:scale-105 transition duration-200"
                             >
                               X
                             </button>

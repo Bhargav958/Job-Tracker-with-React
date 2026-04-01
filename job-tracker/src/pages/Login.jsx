@@ -1,64 +1,77 @@
-import {useState} from "react"
-import { loginUser } from "../appwrite/auth"
-import { useNavigate } from "react-router-dom"
+import { useState } from "react";
+import { loginUser } from "../appwrite/auth";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 function Login() {
   //creating email,password variables
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   //create a load variable to show loading state
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleLogin = async()=>{
-    if (!email || !password) {  //checking if user entered all fields or not
+  const handleLogin = async () => {
+    if (!email || !password) {
+      //checking if user entered all fields or not
       toast.info("Please fill all fields");
       return;
     }
-    setLoading(true)
+    setLoading(true);
     try {
-      await loginUser(email,password)
+      await loginUser(email, password);
       toast.success("Login successful ✅");
-      navigate('/dashboard')
+      navigate("/dashboard");
     } catch (error) {
-      toast.error(error.message)
-    } finally{
-      setLoading(false)
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="dark:bg-gray-900 h-screen flex flex-col items-center justify-center gap-4">
-      <input 
-        type="email"
-        placeholder="Email"
-        className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
-        onChange={(e)=>setEmail(e.target.value)}
-      />
-      <input 
-        type="password" 
-        placeholder="Password"
-        className="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
-        onChange={(e)=>setPassword(e.target.value)}
-      />
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow w-80">
+        {/* Title */}
+        <h2 className="text-2xl font-bold mb-6 text-center">Welcome Back 👋</h2>
 
-      <button onClick={handleLogin} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded cursor-pointer">
-        {loading ? "Logging in..." : "Login"}
-      </button>
+        {/* Inputs */}
+        <input
+          type="email"
+          placeholder="Email"
+          className="border p-2 rounded w-full mb-3 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-      <p className="text-white">
-        Don't have an account? 
-        {/* instead if full page relod we use Link to avoid it */}
-        {/* <a href="/register" className="text-blue-500"> Register</a>  */}
-        <Link to="/register" className="text-blue-400">Register</Link>
-      </p>
+        <input
+          type="password"
+          placeholder="Password"
+          className="border p-2 rounded w-full mb-4 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        {/* Button */}
+        <button
+          onClick={handleLogin}
+          className="bg-blue-500 hover:bg-blue-600 text-white w-full py-2 rounded cursor-pointer transition hover:scale-105 transition duration-200"
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
+
+        {/* Footer */}
+        <p className="text-sm text-center mt-4 text-gray-600 dark:text-gray-300">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-500 hover:underline">
+            Register
+          </Link>
+        </p>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Login
+export default Login;

@@ -37,7 +37,7 @@ function  Navbar(){
                 <Link to='/dashboard' className="hover:text-blue-500 transition">
                     Dashboard
                 </Link>
-                <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded cursor-pointer" >
+                <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded cursor-pointer hover:scale-105 transition duration-200" >
                     Logout
                 </button>
             </div>

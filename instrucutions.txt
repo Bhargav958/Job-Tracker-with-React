@@ -58,3 +58,10 @@
     By importing both config,client in dashboard
 
 -> Updated the { Realtime → API call → setJobs } to { Realtime → update state directly }
+
+-> TODO: 
+    👉 "AI feature" (🔥 best for resume)
+    👉 "profile page"
+    👉 "notifications panel"
+
+    Once the user logged in the home page should not show login again
