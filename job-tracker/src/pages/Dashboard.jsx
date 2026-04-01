@@ -7,6 +7,8 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 import Layout from "./Layout";
 
+import { toast } from "react-toastify";
+
 function Dashboard() {
   //create job,title,company,status
   const [jobs, setJobs] = useState([]);
@@ -58,10 +60,12 @@ function Dashboard() {
       if (editId) {
         // UPDATE
         await addJob(title, company, status, editId); // we'll modify backend
+        toast.success("Job updated ✏️");
         setEditId(null);
       } else {
         // CREATE
         await addJob(title, company, status);
+        toast.success("Job added 🚀");
       }
 
       setTitle("");
@@ -76,6 +80,7 @@ function Dashboard() {
   const handleDelete = async (id) => {
     try {
       await deleteJob(id);
+      toast.success("Job deleted ❌");
       fetchJobs();
     } catch (error) {
       console.log("Delete error:", error.message);

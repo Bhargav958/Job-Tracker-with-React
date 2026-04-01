@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { registerUser } from "../appwrite/auth";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -9,14 +10,14 @@ function Register() {
 
   const handleRegister = async () => {
     if (!email || !password) {
-      alert("Please fill all fields");
+      toast.info("Please fill all fields");
       return;
     }
     try {
       await registerUser(email, password);
       navigate("/dashboard");  //used navigate instead of alert to redirect user to dashboard after successful registration
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 

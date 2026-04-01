@@ -3,6 +3,8 @@ import { loginUser } from "../appwrite/auth"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom";
 
+import { toast } from 'react-toastify';
+
 function Login() {
   //creating email,password variables
   const [email, setEmail] = useState("")
@@ -15,15 +17,16 @@ function Login() {
 
   const handleLogin = async()=>{
     if (!email || !password) {  //checking if user entered all fields or not
-      alert("Please fill all fields");
+      toast.info("Please fill all fields");
       return;
     }
     setLoading(true)
     try {
       await loginUser(email,password)
+      toast.success("Login successful ✅");
       navigate('/dashboard')
     } catch (error) {
-      alert(error.message)
+      toast.error(error.message)
     } finally{
       setLoading(false)
     }

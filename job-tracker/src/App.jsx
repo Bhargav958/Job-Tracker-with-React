@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard'
 import Home from './pages/Home';
 import ProtectedRoute from './pages/ProtectedRoute';
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -15,6 +17,7 @@ function App() {
       <Route path='/register' element={<Register />} />
       <Route path='/dashboard' element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     </Routes>
+    <ToastContainer position='top-right' autoClose={3000} theme='colored'/>
     </BrowserRouter>
   )
 }

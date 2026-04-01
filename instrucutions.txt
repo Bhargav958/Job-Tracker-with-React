@@ -50,3 +50,6 @@
 -> Make the project background to grey abd did some ui changes
 
 -> Added new components (Layout,Sidebar) to decrease the load of dashboard
+
+-> Added a new feature called toastify used instead of alert
+    Installed react-toastify
