@@ -59,6 +59,9 @@
 
 -> Updated the { Realtime → API call → setJobs } to { Realtime → update state directly }
 
+-> Added icons to inputs(email,password) using Mail,Lock
+    Installed lucide-react
+
 -> TODO: 
     👉 "AI feature" (🔥 best for resume)
     👉 "profile page"

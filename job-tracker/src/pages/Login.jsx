@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 
 import { toast } from "react-toastify";
 
+import { Mail, Lock } from "lucide-react";
+
 function Login() {
   //creating email,password variables
   const [email, setEmail] = useState("");
@@ -37,22 +39,43 @@ function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow w-80">
         {/* Title */}
-        <h2 className="text-2xl font-bold mb-6 text-center">Welcome Back 👋</h2>
+        <h2 className="text-2xl text-red-400 font-bold mb-6 text-center">Welcome Back 👋</h2>
 
         {/* Inputs */}
-        <input
+        {/* <input
           type="email"
           placeholder="Email"
           className="border p-2 rounded w-full mb-3 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
           onChange={(e) => setEmail(e.target.value)}
-        />
+        /> */}
+ 
+        <div className="relative mb-3">
+          <Mail className="absolute left-3 top-2.5 text-gray-400" size={18} />         {/* Added icons for the inputs */}
 
-        <input
+          <input
+            type="email"
+            placeholder="Email"
+            className="border pl-10 p-2 rounded w-full dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:ring-2 focus:ring-blue-400"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+
+        {/* <input
           type="password"
           placeholder="Password"
           className="border p-2 rounded w-full mb-4 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
           onChange={(e) => setPassword(e.target.value)}
-        />
+        /> */}
+        <div className="relative mb-4">
+          <Lock className="absolute left-3 top-2.5 text-gray-400" size={18} />
+
+          <input
+            type="password"
+            placeholder="Password"
+            className="border pl-10 p-2 rounded w-full dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:ring-2 focus:ring-blue-400"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
 
         {/* Button */}
         <button

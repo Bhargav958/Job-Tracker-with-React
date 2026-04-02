@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { registerUser } from "../appwrite/auth";
 import { useNavigate } from "react-router-dom";
+
 import { toast } from "react-toastify";
+
+import { Mail, Lock } from "lucide-react";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -23,34 +26,56 @@ function Register() {
       toast.error(error.message);
     } finally {
       setLoading(false);
-     }
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow w-80">
         {/* Title */}
-        <h2 className="text-2xl font-bold mb-6 text-center">
+        <h2 className="text-2xl text-blue-400 font-bold mb-6 text-center">
           Create Account ✨
         </h2>
 
         {/* Email */}
-        <input
+        {/* <input
           type="email"
           placeholder="Email"
           className="border p-2 rounded w-full mb-3 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-400"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-        />
+        /> */}
+        <div className="relative mb-3">
+          <Mail className="absolute left-3 top-2.5 text-gray-400" size={18} />
+
+          <input
+            type="email"
+            placeholder="Email"
+            className="border pl-10 p-2 rounded w-full dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:ring-2 focus:ring-green-400"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
 
         {/* Password */}
-        <input
+        {/* <input
           type="password"
           placeholder="Password"
           className="border p-2 rounded w-full mb-4 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-400"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-        />
+        /> */}
+        <div className="relative mb-4">
+          <Lock className="absolute left-3 top-2.5 text-gray-400" size={18} />
+
+          <input
+            type="password"
+            placeholder="Password"
+            className="border pl-10 p-2 rounded w-full dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:ring-2 focus:ring-green-400"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
 
         {/* Button */}
         <button
