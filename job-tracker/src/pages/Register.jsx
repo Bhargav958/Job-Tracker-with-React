@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 
 import { toast } from "react-toastify";
 
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleRegister = async () => {
     if (!email || !password) {
@@ -20,7 +21,6 @@ function Register() {
     setLoading(true);
     try {
       await registerUser(email, password);
-      const [loading, setLoading] = useState(false);
       navigate("/dashboard"); //used navigate instead of alert to redirect user to dashboard after successful registration
     } catch (error) {
       toast.error(error.message);
@@ -30,8 +30,8 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow w-80">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-black px-4 py-8">
+      <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 sm:p-8 rounded-2xl shadow-lg w-full max-w-sm">
         {/* Title */}
         <h2 className="text-2xl text-blue-400 font-bold mb-6 text-center">
           Create Account ✨
@@ -69,12 +69,18 @@ function Register() {
           <Lock className="absolute left-3 top-2.5 text-gray-400" size={18} />
 
           <input
-            type="password"
+            type={showPassword? "text":"password"}
             placeholder="Password"
             className="border pl-10 p-2 rounded w-full dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:ring-2 focus:ring-green-400"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <div
+            className="absolute right-3 top-2.5 cursor-pointer text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </div>
         </div>
 
         {/* Button */}

@@ -1,8 +1,8 @@
 import { useNavigate, Link } from "react-router-dom";
-import { account } from '../appwrite/config'
-import { useState, useEffect, use } from "react";
+import { account } from "../appwrite/config";
+import { useState, useEffect } from "react";
 
-function  Navbar(){
+function Navbar() {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
@@ -21,28 +21,41 @@ function  Navbar(){
             .catch(()=>setUser(null))
     },[])
 
-    return(
-        <nav className="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow">
-            <Link to='/dashboard' className="text-xl font-bold">
-                Job Tracker👨‍💼
-            </Link>
+  return (
+    <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-white/5 backdrop-blur-lg border-b border-white/10">
+      <Link
+        to="/dashboard"
+        className="text-base sm:text-xl font-bold truncate min-w-0 max-w-[55%] sm:max-w-none"
+      >
+        Job Tracker<span className="hidden sm:inline">👨‍💼</span>
+      </Link>
 
-            <div className="flex items-center gap-4">
-                {user && (
-                    <span className="text-sm text-gray-600 dark:text-gray-300">
-                    {user.email}
-                    </span>
-                )}
+      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+        {user && (
+          <span
+            className="hidden sm:inline text-sm text-gray-300 truncate max-w-[140px] lg:max-w-xs"
+            title={user.email}
+          >
+            {user.email}
+          </span>
+        )}
 
-                <Link to='/dashboard' className="hover:text-blue-500 transition">
-                    Dashboard
-                </Link>
-                <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded cursor-pointer hover:scale-105 transition duration-200" >
-                    Logout
-                </button>
-            </div>
-        </nav>
-    )
+        <Link
+          to="/dashboard"
+          className="hidden sm:inline text-sm hover:text-indigo-400 transition"
+        >
+          Dashboard
+        </Link>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="touch-manipulation bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg cursor-pointer hover:scale-[1.02] transition duration-200"
+        >
+          Logout
+        </button>
+      </div>
+    </nav>
+  );
 }
 
 export default Navbar

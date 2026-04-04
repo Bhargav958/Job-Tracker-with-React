@@ -13,7 +13,12 @@ function ProtectedRoute({ children }) {
             .finally(()=>setLoading(false));
     },[]);
 
-    if(loading) return <p>Loading</p>
+    if (loading)
+        return (
+            <div className="min-h-screen flex items-center justify-center text-gray-400">
+            Loading...
+            </div>
+    );
 
     return user? children : <Navigate to='/login' />;
 }
