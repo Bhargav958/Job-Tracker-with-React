@@ -1,4 +1,23 @@
-# React + Vite
+## Job Tracker
+
+### AI (Gemini) integration
+This project includes an **AI Assistant** (Job Insights + Interview Prep) that calls **Gemini** securely via an **Appwrite Function**.
+
+#### 1) Deploy the Appwrite Function
+- Create a new Appwrite Function using the code in `appwrite-functions/gemini-ai/`
+- Set Function environment variable: `GEMINI_API_KEY`
+- Deploy, then copy the **Function ID**
+
+#### 2) Configure the frontend
+Create `job-tracker/.env`:
+
+```bash
+VITE_APPWRITE_AI_FUNCTION_ID=YOUR_FUNCTION_ID
+```
+
+Restart `npm run dev`.
+
+> Note: The API key must stay server-side (in Appwrite), not in the React app.
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

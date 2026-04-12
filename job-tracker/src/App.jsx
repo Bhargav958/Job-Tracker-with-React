@@ -42,6 +42,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
+import Profile from "./pages/Profile";
 import ProtectedRoute from "./pages/ProtectedRoute";
 
 import { ToastContainer } from "react-toastify";
@@ -51,9 +52,10 @@ import "react-toastify/dist/ReactToastify.css";
 function PageWrapper({ children }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -15 }}
+      // IMPORTANT: keep transforms off route wrappers (DnD math breaks with transformed ancestors)
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
       {children}
@@ -101,6 +103,17 @@ function AnimatedRoutes() {
             <ProtectedRoute>
               <PageWrapper>
                 <Dashboard />
+              </PageWrapper>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <PageWrapper>
+                <Profile />
               </PageWrapper>
             </ProtectedRoute>
           }

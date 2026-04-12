@@ -71,3 +71,8 @@
 
 ----------------- UPDATE -----------------------> 
 -> WE RUN THE FILE USING DOCKER WITH DOCKER START/STOP job-app
+
+-> We used cursor to change the ui of the project totally
+
+-> Todo: 
+    Complete the AI features

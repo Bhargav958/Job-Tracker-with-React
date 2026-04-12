@@ -1,4 +1,4 @@
-import { Client, Account, Databases } from "appwrite";
+import { Client, Account, Databases, Functions } from "appwrite";
 
 export const config = {
   endpoint: "https://sgp.cloud.appwrite.io/v1",
@@ -15,3 +15,4 @@ export const client = new Client()
 //create an account instance
 export const account = new Account(client);
 export const databases = new Databases(client);
+export const functions = new Functions(client);

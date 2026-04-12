@@ -41,6 +41,13 @@ function Sidebar({ onClose, variant = "default" }) {
         >
           Dashboard
         </Link>
+        <Link
+          to="/profile"
+          className={linkClass("/profile")}
+          onClick={() => isOverlay && onClose?.()}
+        >
+          Profile
+        </Link>
       </nav>
     </div>
   );

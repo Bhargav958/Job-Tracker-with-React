@@ -381,6 +381,63 @@ import Layout from "./Layout";
 
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { runAiInsight } from "../appwrite/ai";
+
+const STATUS_COLUMNS = ["applied", "interview", "rejected"];
+
+function buildColumns(jobs) {
+  return {
+    applied: jobs.filter((job) => job.status === "applied"),
+    interview: jobs.filter((job) => job.status === "interview"),
+    rejected: jobs.filter((job) => job.status === "rejected"),
+  };
+}
+
+function reorderJobs(jobs, source, destination) {
+  const columns = buildColumns(jobs);
+  const sourceJobs = [...columns[source.droppableId]];
+  const isSameColumn = source.droppableId === destination.droppableId;
+  const destinationJobs = isSameColumn
+    ? sourceJobs
+    : [...columns[destination.droppableId]];
+
+  const [movedJob] = sourceJobs.splice(source.index, 1);
+
+  if (!movedJob) {
+    return jobs;
+  }
+
+  const updatedJob = isSameColumn
+    ? movedJob
+    : { ...movedJob, status: destination.droppableId };
+
+  destinationJobs.splice(destination.index, 0, updatedJob);
+
+  if (isSameColumn) {
+    return [
+      ...destinationJobs,
+      ...STATUS_COLUMNS.flatMap((status) =>
+        status === source.droppableId ? [] : columns[status]
+      ),
+    ];
+  }
+
+  return [
+    ...destinationJobs,
+    ...sourceJobs,
+    ...STATUS_COLUMNS.flatMap((status) => {
+      if (
+        status === source.droppableId ||
+        status === destination.droppableId
+      ) {
+        return [];
+      }
+
+      return columns[status];
+    }),
+  ];
+}
 
 function Dashboard() {
   // create job,title,company,status
@@ -399,6 +456,30 @@ function Dashboard() {
   // for charts
   const COLORS = ["#6366f1", "#a855f7", "#ef4444"];
 
+  // AI assistant
+  const [aiJobText, setAiJobText] = useState("");
+  const [aiMode, setAiMode] = useState("job_insights");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiResult, setAiResult] = useState(null);
+
+  const handleRunAi = async () => {
+    if (!aiJobText.trim()) {
+      toast.info("Paste a job description first");
+      return;
+    }
+
+    setAiLoading(true);
+    setAiResult(null);
+    try {
+      const res = await runAiInsight({ jobText: aiJobText, mode: aiMode });
+      setAiResult(res);
+    } catch (err) {
+      toast.error(err?.message || "AI request failed");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   const data = [
     { name: "Applied", value: 0 },
     { name: "Interview", value: 0 },
@@ -413,11 +494,7 @@ function Dashboard() {
   });
 
   // instead of lists, using columns (kanban)
-  const columns = {
-    applied: jobs.filter((j) => j.status === "applied"),
-    interview: jobs.filter((j) => j.status === "interview"),
-    rejected: jobs.filter((j) => j.status === "rejected"),
-  };
+  const columns = buildColumns(jobs);
 
   // fetch jobs from backend
   const fetchJobs = async () => {
@@ -470,27 +547,32 @@ function Dashboard() {
   // drag and drop functionality
   const handleDragEnd = async (result) => {
     if (!result.destination) return;
+    if (
+      result.source.droppableId === result.destination.droppableId &&
+      result.source.index === result.destination.index
+    ) {
+      return;
+    }
 
     const jobId = result.draggableId;
     const newStatus = result.destination.droppableId;
+    const previousJobs = jobs;
 
-    // 🔥 1. Update UI instantly (optimistic update)
-    const updatedJobs = jobs.map((job) =>
-      job.$id === jobId ? { ...job, status: newStatus } : job
-    );
+    // Update UI instantly with cross-column moves and same-column reordering.
+    const updatedJobs = reorderJobs(jobs, result.source, result.destination);
 
     setJobs(updatedJobs);
 
-    // 🔥 2. Update DB in background
     const job = jobs.find((j) => j.$id === jobId);
 
     try {
-      await addJob(job.title, job.company, newStatus, jobId);
+      if (job && job.status !== newStatus) {
+        await addJob(job.title, job.company, newStatus, jobId);
+      }
     } catch (err) {
       console.error(err);
-
-      // ❌ rollback if error
-      fetchJobs();
+      setJobs(previousJobs);
+      toast.error("Could not move the job card");
     }
   };
 
@@ -527,19 +609,97 @@ function Dashboard() {
   return (
     <Layout>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        // IMPORTANT: avoid translate transforms on DnD parents
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
         className="space-y-8"
       >
         {/* Header */}
         <div className="mb-2 border-b border-white/10 pb-6">
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
-            Dashboard
-          </h1>
-          <p className="text-gray-400 text-sm mt-2 max-w-xl">
-            Track and manage your job applications in one place
-          </p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                Dashboard
+              </h1>
+              <p className="text-gray-400 text-sm mt-2 max-w-xl">
+                Track and manage your job applications in one place
+              </p>
+            </div>
+
+            <Link
+              to="/profile"
+              className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-200 transition hover:bg-white/10"
+            >
+              View profile
+            </Link>
+          </div>
+        </div>
+
+        {/* AI Assistant (Gemini via Appwrite Function) */}
+        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg shadow-black/20 ring-1 ring-white/5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-100">
+                AI Assistant
+              </h2>
+              <p className="text-gray-400 text-sm mt-1">
+                Paste a job description to get insights or interview prep.
+              </p>
+              {!import.meta.env.VITE_APPWRITE_AI_FUNCTION_ID && (
+                <p className="text-amber-300/90 text-sm mt-2">
+                  Setup needed: create `job-tracker/.env` and set{" "}
+                  <span className="font-semibold">
+                    VITE_APPWRITE_AI_FUNCTION_ID
+                  </span>
+                  , then restart `npm run dev`.
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <select
+                value={aiMode}
+                onChange={(e) => setAiMode(e.target.value)}
+                className="bg-white/10 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400/40"
+              >
+                <option value="job_insights">Job insights</option>
+                <option value="interview_prep">Interview prep</option>
+              </select>
+              <button
+                type="button"
+                onClick={handleRunAi}
+                disabled={aiLoading}
+                className="shrink-0 bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-2.5 rounded-xl font-medium disabled:opacity-60 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] transition shadow-md shadow-indigo-500/20"
+              >
+                {aiLoading ? "Thinking..." : "Generate"}
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            <textarea
+              value={aiJobText}
+              onChange={(e) => setAiJobText(e.target.value)}
+              rows={8}
+              placeholder="Paste the job description here..."
+              className="w-full resize-y bg-white/10 border border-white/10 rounded-2xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400/40"
+            />
+
+            <div className="bg-white/10 border border-white/10 rounded-2xl p-4 overflow-auto">
+              {!aiResult ? (
+                <p className="text-gray-400 text-sm">
+                  Your results will appear here.
+                </p>
+              ) : (
+                <pre className="whitespace-pre-wrap text-sm text-gray-200">
+                  {aiResult.text ||
+                    aiResult.result ||
+                    JSON.stringify(aiResult, null, 2)}
+                </pre>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Add Job Section (Glass UI) */}
@@ -585,13 +745,17 @@ function Dashboard() {
         {/* Kanban Board */}
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-            {["applied", "interview", "rejected"].map((status) => (
+            {STATUS_COLUMNS.map((status) => (
               <Droppable droppableId={status} key={status}>
-                {(provided) => (
+                {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-3 sm:p-4 min-h-[280px] sm:min-h-[360px] md:min-h-[400px] shadow-lg shadow-black/15 ring-1 ring-white/5"
+                    className={`bg-white/5 backdrop-blur-lg border rounded-2xl p-3 sm:p-4 min-h-[280px] sm:min-h-[360px] md:min-h-[400px] shadow-lg shadow-black/15 ring-1 ring-white/5 transition-colors ${
+                      snapshot.isDraggingOver
+                        ? "border-indigo-400/50 bg-indigo-500/10"
+                        : "border-white/10"
+                    }`}
                   >
                     {/* Column Header with count */}
                     <h2 className="flex justify-between items-center text-gray-200 font-semibold mb-4 capitalize border-b border-white/10 pb-3">
@@ -615,16 +779,16 @@ function Dashboard() {
                         draggableId={job.$id}
                         index={index}
                       >
-                        {(provided) => (
-                          <motion.div
-                            layout
-                            whileHover={{ y: -4 }}
-                            whileTap={{ scale: 0.97 }}
-                            transition={{ type: "spring", stiffness: 200 }}
+                        {(provided, snapshot) => (
+                          <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className="bg-white/10 border border-white/10 p-3 mb-3 rounded-xl flex justify-between items-center shadow-sm hover:border-white/20 transition-colors"
+                            style={provided.draggableProps.style}
+                            className={`bg-white/10 border p-3 mb-3 rounded-xl flex justify-between items-center shadow-sm transition-colors ${
+                              snapshot.isDragging
+                                ? "border-indigo-400/60 shadow-lg shadow-indigo-500/10"
+                                : "border-white/10 hover:border-white/20 hover:-translate-y-1"
+                            }`}
                           >
                             <div>
                               <p className="font-semibold">{job.title}</p>
@@ -633,13 +797,24 @@ function Dashboard() {
                               </p>
                             </div>
 
-                            <button
-                              onClick={() => handleDelete(job.$id)}
-                              className="text-red-400 hover:text-red-300 transition"
-                            >
-                              ✕
-                            </button>
-                          </motion.div>
+                            <div className="flex items-center gap-3">
+                              <span
+                                {...provided.dragHandleProps}
+                                className="cursor-grab select-none text-gray-400 active:cursor-grabbing"
+                                aria-label={`Drag ${job.title}`}
+                                title="Drag job card"
+                              >
+                                ⋮⋮
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleDelete(job.$id)}
+                                className="text-red-400 hover:text-red-300 transition"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          </div>
                         )}
                       </Draggable>
                     ))}
