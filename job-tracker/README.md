@@ -1,6 +1,6 @@
 ## Job Tracker
 
-### AI (Gemini) integration
+### Final Aim to : AI (Gemini) integration
 This project includes an **AI Assistant** (Job Insights + Interview Prep) that calls **Gemini** securely via an **Appwrite Function**.
 
 #### 1) Deploy the Appwrite Function
