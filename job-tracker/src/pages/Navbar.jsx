@@ -34,7 +34,7 @@ function Navbar() {
   return (
     <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-white/5 backdrop-blur-lg border-b border-white/10">
       <Link
-        to="/dashboard"
+        to="/"
         className="text-base sm:text-xl font-bold truncate min-w-0 max-w-[55%] sm:max-w-none"
       >
         Job Tracker<span className="hidden sm:inline">👨‍💼</span>
@@ -72,7 +72,7 @@ function Navbar() {
           </>
         )}
 
-        <Link
+        {/* <Link
           to="/dashboard"
           className="hidden sm:inline text-sm hover:text-indigo-400 transition"
         >
@@ -83,7 +83,7 @@ function Navbar() {
           className="hidden sm:inline text-sm hover:text-indigo-400 transition"
         >
           Profile
-        </Link>
+        </Link> */}
         <button
           type="button"
           onClick={handleLogout}

@@ -76,3 +76,6 @@
 
 -> Todo: 
     Complete the AI features
+
+
+-> Added the new home page details and increased the font a bit

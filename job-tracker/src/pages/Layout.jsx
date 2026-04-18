@@ -50,12 +50,8 @@ function Layout({ children }) {
           </div>
         )}
 
-        <div className="flex flex-1 min-w-0 flex-col p-4 sm:p-6">
-          <div
-            className={`w-full max-w-6xl shrink-0 ${
-              isSidebarOpen ? "" : "mx-auto"
-            }`}
-          >
+        <div className="flex flex-1 min-w-0 flex-col items-center p-4 sm:p-6">
+          <div className="w-full max-w-6xl shrink-0 mx-auto">
             {children}
           </div>
         </div>
